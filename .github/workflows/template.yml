@@ -71,4 +71,4 @@ jobs:
           $newversion = "$($version.Major).$($version.Minor+1)"
           
           az acr login --name bicepsharedregistry.azurecr.io --expose-token
-          bicep publish .\iac\templates\storageaccount.json --target br:bicepsharedregistry.azurecr.io/bicep/modules/storage:$newversion
+          bicep publish .\src\iac\storageaccount.json --target br:bicepsharedregistry.azurecr.io/bicep/modules/storage:$newversion
