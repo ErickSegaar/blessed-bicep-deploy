@@ -40,7 +40,7 @@ jobs:
         with:
           name: drop
           path: |
-            ./iac/storageaccount.json
+            ./iac/storageaccount.bicep
 
   publish-template:
     if: github.event_name == 'push'  || github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
@@ -71,4 +71,4 @@ jobs:
           $newversion = "$($version.Major).$($version.Minor+1)"
           
           az acr login --name bicepsharedregistry.azurecr.io --expose-token
-          bicep publish .\src\storageaccount.json --target br:bicepsharedregistry.azurecr.io/bicep/modules/storage:$newversion
+          bicep publish .\src\storageaccount.bicep --target br:bicepsharedregistry.azurecr.io/bicep/modules/storage:$newversion
