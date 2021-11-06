@@ -58,11 +58,17 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - shell: bash
+        run: |
+          curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+          chmod +x ./bicep
+          sudo mv ./bicep /usr/local/bin/bicep
+
       - shell: pwsh
         run: |
           $manifest = az acr repository show-manifests --name bicepsharedregistry --repository bicep/modules/storage --top 1 --orderby time_desc | ConvertFrom-Json
           $version = [version]$manifest.tags[0]
           $newversion = "$($version.Major).$($version.Minor+1).0"
-            az acr login --name bicepsharedregistry.azurecr.io --expose-token
-            ls $HOME/.azure/bin
-            $HOME/.azure/bin/bicep publish .\iac\templates\storageaccount.json --target br:bicepsharedregistry.azurecr.io/bicep/modules/storage:$newversion
+          
+          az acr login --name bicepsharedregistry.azurecr.io --expose-token
+          bicep publish .\src\storageaccount.bicep --target br:bicepsharedregistry.azurecr.io/bicep/modules/storage:$newversion
