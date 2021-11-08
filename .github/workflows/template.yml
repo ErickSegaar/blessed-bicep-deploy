@@ -65,6 +65,7 @@ jobs:
           sudo mv ./bicep /usr/local/bin/bicep
 
       - shell: pwsh
+        id: publish-version
         run: |
           $manifest = az acr repository show-manifests --name bicepsharedregistry --repository bicep/modules/storage --top 1 --orderby time_desc | ConvertFrom-Json
           $version = [version]$manifest.tags[0]
@@ -72,5 +73,16 @@ jobs:
           
           az acr login --name bicepsharedregistry.azurecr.io --expose-token
           bicep publish .\src\storageaccount.bicep --target br:bicepsharedregistry.azurecr.io/bicep/modules/storage:$newversion
-          git tag $newversion
-          git push --tags
+          echo "::set-output name=version::$newversion"
+
+      - name: Create tag
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ steps.publish-version.outputs.version }}",
+              sha: context.sha
+            })
