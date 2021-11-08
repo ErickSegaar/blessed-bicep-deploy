@@ -68,7 +68,7 @@ jobs:
         id: publish-version
         run: |
           $manifest = az acr repository show-manifests --name bicepsharedregistry --repository bicep/modules/storage --top 1 --orderby time_desc | ConvertFrom-Json
-          $version = [version]$manifest.tags[0]
+          $version = [version]$manifest.tags[-1]
           $newversion = "$($version.Major).$($version.Minor+1).0"
           
           az acr login --name bicepsharedregistry.azurecr.io --expose-token
