@@ -72,3 +72,5 @@ jobs:
           
           az acr login --name bicepsharedregistry.azurecr.io --expose-token
           bicep publish .\src\storageaccount.bicep --target br:bicepsharedregistry.azurecr.io/bicep/modules/storage:$newversion
+          git tag $newversion
+          git push --tags
